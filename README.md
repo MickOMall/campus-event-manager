@@ -1,6 +1,7 @@
 # campus-event-manager
 
 A simple web application to manage campus events. Users can create, view, edit, and delete events, as well as sort them by the order they were added or by event date.  
+https://github.com/MickOMall/campus-event-manager
 
 # Team members:
 Michael O'Malley  
