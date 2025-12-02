@@ -15,7 +15,7 @@
 <body>
   <h1>Campus Event Manager</h1>
 
-  <!-- Add Event Form -->
+  //add event 
   <h2>Add Event</h2>
   <form action="/events" method="POST">
     <label for="title">Title:</label>
@@ -33,7 +33,7 @@
     <button type="submit">Add Event</button>
   </form>
 
-  <!-- Sort Options -->
+  //sort options
   <h2>Sort Events</h2>
   <form method="GET" action="/">
     <label for="sort">Sort by:</label>
@@ -43,7 +43,7 @@
     </select>
   </form>
 
-  <!-- Event Table -->
+  //event table
   <h2>Events</h2>
   <% if (events.length === 0) { %>
     <p>No events found.</p>
