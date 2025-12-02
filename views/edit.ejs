@@ -2,28 +2,72 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Edit Event</title>
+  <title>Campus Event Manager</title>
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-  <h1>Edit Event</h1>
+  <h1>Campus Event Manager</h1>
 
-  <form action="/events/<%= event._id %>?_method=PUT" method="POST">
+  <!-- Add New Event Form -->
+  <h2>Add Event</h2>
+  <form action="/events" method="POST">
     <label for="title">Title:</label>
-    <input type="text" name="title" id="title" value="<%= event.title %>" required>
+    <input type="text" name="title" id="title" required>
 
     <label for="date">Date:</label>
-    <input type="date" name="date" id="date" value="<%= event.date ? event.date.toISOString().split('T')[0] : '' %>" required>
+    <input type="date" name="date" id="date" required>
 
     <label for="location">Location:</label>
-    <input type="text" name="location" id="location" value="<%= event.location %>" required>
+    <input type="text" name="location" id="location" required>
 
     <label for="description">Description:</label>
-    <textarea name="description" id="description"><%= event.description %></textarea>
+    <textarea name="description" id="description"></textarea>
 
-    <button type="submit">Update Event</button>
+    <button type="submit">Add Event</button>
   </form>
 
-  <a href="/">Back to Events</a>
+  <!-- Sort Options -->
+  <h2>Sort Events</h2>
+  <form method="GET" action="/">
+    <label for="sort">Sort by:</label>
+    <select name="sort" id="sort" onchange="this.form.submit()">
+      <option value="createdAt" <% if (!currentSort || currentSort === 'createdAt') { %>selected<% } %>>Order Entered</option>
+      <option value="date" <% if (currentSort === 'date') { %>selected<% } %>>Event Date</option>
+    </select>
+  </form>
+
+  <!-- Existing Events Table -->
+  <h2>Events</h2>
+  <% if (events.length === 0) { %>
+    <p>No events found.</p>
+  <% } else { %>
+    <table>
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Date</th>
+          <th>Location</th>
+          <th>Description</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% events.forEach(event => { %>
+          <tr>
+            <td><%= event.title %></td>
+            <td><%= event.date ? event.date.toLocaleDateString() : 'N/A' %></td>
+            <td><%= event.location %></td>
+            <td><%= event.description %></td>
+            <td>
+              <a href="/events/<%= event._id %>/edit">Edit</a>
+              <form action="/events/<%= event._id %>?_method=DELETE" method="POST" style="display:inline;">
+                <button type="submit">Delete</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
 </body>
 </html>
