@@ -1,20 +1,12 @@
-// routes/events.js
 const express = require('express');
 const router = express.Router();
-const Event = require('../models/Event'); // Make sure this path is correct
+const Event = require('../models/Event');
 
-// GET all events with optional sorting
+// GET all events (single page) with optional sorting
 router.get('/', async (req, res) => {
   try {
-    const sortBy = req.query.sort || 'createdAt'; // default sort by creation date
-    let sortOption = {};
-
-    if (sortBy === 'date') {
-      sortOption.date = 1; // ascending by event date
-    } else {
-      sortOption.createdAt = 1; // ascending by creation time
-    }
-
+    const sortBy = req.query.sort || 'createdAt';
+    const sortOption = sortBy === 'date' ? { date: 1 } : { createdAt: 1 };
     const events = await Event.find().sort(sortOption);
     res.render('index', { events, currentSort: sortBy });
   } catch (err) {
@@ -23,12 +15,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// GET form to create a new event
-router.get('/events/new', (req, res) => {
-  res.render('new'); // EJS template for creating an event
-});
-
-// POST new event
+// POST new event (added directly on the index page)
 router.post('/events', async (req, res) => {
   try {
     await Event.create(req.body);
@@ -39,12 +26,12 @@ router.post('/events', async (req, res) => {
   }
 });
 
-// GET edit form for an existing event
+// GET edit form (separate page)
 router.get('/events/:id/edit', async (req, res) => {
   try {
     const event = await Event.findById(req.params.id);
     if (!event) return res.status(404).send('Event not found');
-    res.render('edit', { event }); // pass 'event' to EJS
+    res.render('edit', { event });
   } catch (err) {
     console.error(err);
     res.status(500).send('Error fetching event');
@@ -54,7 +41,7 @@ router.get('/events/:id/edit', async (req, res) => {
 // PUT update event
 router.put('/events/:id', async (req, res) => {
   try {
-    await Event.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    await Event.findByIdAndUpdate(req.params.id, req.body);
     res.redirect('/');
   } catch (err) {
     console.error(err);
