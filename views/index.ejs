@@ -15,7 +15,7 @@
 <body>
   <h1>Campus Event Manager</h1>
 
-  <%  event form%>
+  <% /* Event form */ %>
   <h2>Add Event</h2>
   <form action="/events" method="POST">
     <label for="title">Title:</label>
@@ -33,7 +33,7 @@
     <button type="submit">Add Event</button>
   </form>
 
-  <% sort options  %>
+  <% /* Sort options */ %>
   <h2>Sort Events</h2>
   <form method="GET" action="/">
     <label for="sort">Sort by:</label>
@@ -43,7 +43,7 @@
     </select>
   </form>
 
-  <%  event table %>
+  <% /* Event table */ %>
   <h2>Events</h2>
   <% if (events.length === 0) { %>
     <p>No events found.</p>
@@ -80,7 +80,6 @@
                 <button type="button" class="cancel-btn" style="display:none;">Cancel</button>
               </form>
               
-              <!-- Delete button outside of edit form -->
               <form action="/events/<%= event._id %>?_method=DELETE" method="POST" style="display:inline;">
                 <button type="submit">Delete</button>
               </form>
@@ -107,15 +106,9 @@
         });
 
         cancelBtn.addEventListener('click', () => {
-          // Reset values to original using defaultValue
           inputs.forEach(input => {
-            if(input.tagName === 'INPUT' && input.type === 'date'){
-              input.value = input.defaultValue;
-            } else if(input.tagName === 'INPUT'){
-              input.value = input.defaultValue;
-            } else {
-              input.value = input.textContent;
-            }
+            // reset to original value using defaultValue
+            input.value = input.defaultValue;
             input.setAttribute('readonly', true);
           });
           editBtn.style.display = 'inline';
