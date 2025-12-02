@@ -26,6 +26,16 @@
     <button type="submit">Add Event</button>
   </form>
 
+  <!-- Sort Options -->
+  <h2>Sort Events</h2>
+  <form method="GET" action="/">
+    <label for="sort">Sort by:</label>
+    <select name="sort" id="sort" onchange="this.form.submit()">
+      <option value="createdAt" <% if (!currentSort || currentSort === 'createdAt') { %>selected<% } %>>Order Entered</option>
+      <option value="date" <% if (currentSort === 'date') { %>selected<% } %>>Event Date</option>
+    </select>
+  </form>
+
   <!-- Existing Events -->
   <h2>Events</h2>
   <table>
