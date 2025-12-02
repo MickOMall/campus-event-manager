@@ -54,16 +54,19 @@
       <tbody>
         <% events.forEach(event => { %>
           <tr>
-            <td><%= event.title %></td>
-            <td><%= event.date ? event.date.toLocaleDateString() : 'N/A' %></td>
-            <td><%= event.location %></td>
-            <td><%= event.description %></td>
-            <td>
-              <a href="/events/<%= event._id %>/edit">Edit</a>
-              <form action="/events/<%= event._id %>?_method=DELETE" method="POST" style="display:inline;">
-                <button type="submit">Delete</button>
-              </form>
-            </td>
+            <!-- Inline edit form -->
+            <form action="/events/<%= event._id %>?_method=PUT" method="POST">
+              <td><input type="text" name="title" value="<%= event.title %>" required></td>
+              <td><input type="date" name="date" value="<%= event.date ? event.date.toISOString().split('T')[0] : '' %>" required></td>
+              <td><input type="text" name="location" value="<%= event.location %>" required></td>
+              <td><textarea name="description"><%= event.description %></textarea></td>
+              <td>
+                <button type="submit">Update</button>
+                <form action="/events/<%= event._id %>?_method=DELETE" method="POST" style="display:inline;">
+                  <button type="submit">Delete</button>
+                </form>
+              </td>
+            </form>
           </tr>
         <% }) %>
       </tbody>
