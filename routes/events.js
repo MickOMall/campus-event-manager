@@ -2,11 +2,18 @@ const express = require('express');
 const router = express.Router();
 const Event = require('../models/Event');
 
-// GET all events (single page) with optional sorting
+// GET all events with optional sorting
 router.get('/', async (req, res) => {
   try {
     const sortBy = req.query.sort || 'createdAt';
-    const sortOption = sortBy === 'date' ? { date: 1 } : { createdAt: 1 };
+    let sortOption = {};
+
+    if (sortBy === 'date') {
+      sortOption.date = 1; // ascending by event date
+    } else {
+      sortOption.createdAt = 1; // ascending by creation time
+    }
+
     const events = await Event.find().sort(sortOption);
     res.render('index', { events, currentSort: sortBy });
   } catch (err) {
@@ -15,7 +22,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// POST new event (added directly on the index page)
+// POST new event
 router.post('/events', async (req, res) => {
   try {
     await Event.create(req.body);
@@ -26,12 +33,12 @@ router.post('/events', async (req, res) => {
   }
 });
 
-// GET edit form (separate page)
+// GET edit form for an existing event (separate page)
 router.get('/events/:id/edit', async (req, res) => {
   try {
     const event = await Event.findById(req.params.id);
     if (!event) return res.status(404).send('Event not found');
-    res.render('edit', { event });
+    res.render('edit', { event }); // pass event to edit.ejs
   } catch (err) {
     console.error(err);
     res.status(500).send('Error fetching event');
@@ -41,7 +48,7 @@ router.get('/events/:id/edit', async (req, res) => {
 // PUT update event
 router.put('/events/:id', async (req, res) => {
   try {
-    await Event.findByIdAndUpdate(req.params.id, req.body);
+    await Event.findByIdAndUpdate(req.params.id, req.body, { new: true });
     res.redirect('/');
   } catch (err) {
     console.error(err);
