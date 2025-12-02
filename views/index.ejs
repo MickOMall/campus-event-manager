@@ -61,28 +61,30 @@
       <tbody>
         <% events.forEach(event => { %>
           <tr data-id="<%= event._id %>">
-            <form class="edit-form" action="/events/<%= event._id %>?_method=PUT" method="POST">
-              <td>
+            <td>
+              <form class="edit-form" action="/events/<%= event._id %>?_method=PUT" method="POST">
                 <input type="text" name="title" value="<%= event.title %>" readonly>
-              </td>
-              <td>
+            </td>
+            <td>
                 <input type="date" name="date" value="<%= event.date ? event.date.toISOString().split('T')[0] : '' %>" readonly>
-              </td>
-              <td>
+            </td>
+            <td>
                 <input type="text" name="location" value="<%= event.location %>" readonly>
-              </td>
-              <td>
+            </td>
+            <td>
                 <textarea name="description" readonly><%= event.description %></textarea>
-              </td>
-              <td>
+            </td>
+            <td>
                 <button type="button" class="edit-btn">Edit</button>
                 <button type="submit" class="update-btn" style="display:none;">Update</button>
                 <button type="button" class="cancel-btn" style="display:none;">Cancel</button>
-                <form action="/events/<%= event._id %>?_method=DELETE" method="POST" style="display:inline;">
-                  <button type="submit">Delete</button>
-                </form>
-              </td>
-            </form>
+              </form>
+              
+              <!-- Delete button outside of edit form -->
+              <form action="/events/<%= event._id %>?_method=DELETE" method="POST" style="display:inline;">
+                <button type="submit">Delete</button>
+              </form>
+            </td>
           </tr>
         <% }) %>
       </tbody>
@@ -105,12 +107,14 @@
         });
 
         cancelBtn.addEventListener('click', () => {
-          // Reset values to original
+          // Reset values to original using defaultValue
           inputs.forEach(input => {
             if(input.tagName === 'INPUT' && input.type === 'date'){
               input.value = input.defaultValue;
+            } else if(input.tagName === 'INPUT'){
+              input.value = input.defaultValue;
             } else {
-              input.value = input.defaultValue || input.textContent;
+              input.value = input.textContent;
             }
             input.setAttribute('readonly', true);
           });
