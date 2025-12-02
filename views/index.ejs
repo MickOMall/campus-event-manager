@@ -4,6 +4,13 @@
   <meta charset="UTF-8">
   <title>Campus Event Manager</title>
   <link rel="stylesheet" href="/styles.css">
+  <style>
+    input[readonly], textarea[readonly] {
+      background-color: #f5f5f5;
+      border: none;
+      color: #333;
+    }
+  </style>
 </head>
 <body>
   <h1>Campus Event Manager</h1>
@@ -53,25 +60,66 @@
       </thead>
       <tbody>
         <% events.forEach(event => { %>
-          <tr>
-            <form action="/events/<%= event._id %>?_method=PUT" method="POST">
-              <td><input type="text" name="title" value="<%= event.title %>" required></td>
-              <td><input type="date" name="date" value="<%= event.date ? event.date.toISOString().split('T')[0] : '' %>" required></td>
-              <td><input type="text" name="location" value="<%= event.location %>" required></td>
-              <td><textarea name="description"><%= event.description %></textarea></td>
+          <tr data-id="<%= event._id %>">
+            <form class="edit-form" action="/events/<%= event._id %>?_method=PUT" method="POST">
               <td>
-                <button type="submit">Update</button>
+                <input type="text" name="title" value="<%= event.title %>" readonly>
+              </td>
+              <td>
+                <input type="date" name="date" value="<%= event.date ? event.date.toISOString().split('T')[0] : '' %>" readonly>
+              </td>
+              <td>
+                <input type="text" name="location" value="<%= event.location %>" readonly>
+              </td>
+              <td>
+                <textarea name="description" readonly><%= event.description %></textarea>
+              </td>
+              <td>
+                <button type="button" class="edit-btn">Edit</button>
+                <button type="submit" class="update-btn" style="display:none;">Update</button>
+                <button type="button" class="cancel-btn" style="display:none;">Cancel</button>
+                <form action="/events/<%= event._id %>?_method=DELETE" method="POST" style="display:inline;">
+                  <button type="submit">Delete</button>
+                </form>
               </td>
             </form>
-            <td>
-              <form action="/events/<%= event._id %>?_method=DELETE" method="POST">
-                <button type="submit">Delete</button>
-              </form>
-            </td>
           </tr>
         <% }) %>
       </tbody>
     </table>
   <% } %>
+
+  <script>
+    document.querySelectorAll('tr').forEach(row => {
+      const editBtn = row.querySelector('.edit-btn');
+      const updateBtn = row.querySelector('.update-btn');
+      const cancelBtn = row.querySelector('.cancel-btn');
+      const inputs = row.querySelectorAll('input, textarea');
+
+      if(editBtn){
+        editBtn.addEventListener('click', () => {
+          inputs.forEach(input => input.removeAttribute('readonly'));
+          editBtn.style.display = 'none';
+          updateBtn.style.display = 'inline';
+          cancelBtn.style.display = 'inline';
+        });
+
+        cancelBtn.addEventListener('click', () => {
+          // Reset values to original
+          inputs.forEach(input => {
+            if(input.tagName === 'INPUT' && input.type === 'date'){
+              input.value = input.defaultValue;
+            } else {
+              input.value = input.defaultValue || input.textContent;
+            }
+            input.setAttribute('readonly', true);
+          });
+          editBtn.style.display = 'inline';
+          updateBtn.style.display = 'none';
+          cancelBtn.style.display = 'none';
+        });
+      }
+    });
+  </script>
 </body>
 </html>
